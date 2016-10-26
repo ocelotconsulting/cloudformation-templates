@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "LambdaNameParameter",
+    "ParameterValue": "my-function"
+  },
+  {
+    "ParameterKey": "LambdaHandlerNameParameter",
+    "ParameterValue": "index.handler"
+  },
+  {
+    "ParameterKey": "LambdaMemoryParameter",
+    "ParameterValue": "128"
+  },
+  {
+    "ParameterKey": "LambdaRuntimeParameter",
+    "ParameterValue": "nodejs4.3"
+  },
+  {
+    "ParameterKey": "LambdaBucketParameter",
+    "ParameterValue": "lambda-test"
+  },
+  {
+    "ParameterKey": "LambdaFileParameter",
+    "ParameterValue": "dist.zip"
+  }
+]

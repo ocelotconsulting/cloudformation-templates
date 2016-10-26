@@ -1,0 +1,93 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "A AWS CloudFormation template for deploying a lambda",
+    "Parameters": {
+        "LambdaNameParameter": {
+            "Type": "String",
+            "Description": "Enter the name of your lambda function."
+        },
+        "LambdaHandlerNameParameter": {
+            "Type": "String",
+            "Description": "Enter the name of your lambda handler (eg. 'index.handler')."
+        },
+        "LambdaMemoryParameter": {
+            "Type": "Number",
+            "Default": 1024,
+            "Description": "Enter the amount of memory for your lambda to run with."
+        },
+        "LambdaRuntimeParameter": {
+            "Type": "String",
+            "Default": "nodejs4.3",
+            "AllowedValues" : ["java8", "nodejs", "nodejs4.3", "python2.7"],
+            "Description": "Enter the type of runtime for your lambda function."
+        },
+        "LambdaBucketParameter": {
+            "Type": "String",
+            "Description": "Enter the name of the bucket you've uploaded your lambda to."
+        },
+        "LambdaFileParameter": {
+            "Type": "String",
+            "Description": "Enter the name of the file (flat or zip) your lambda is in."
+        }
+    },
+    "Resources": {
+        "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": ["lambda.amazonaws.com"]
+                        },
+                        "Action": ["sts:AssumeRole"]
+                    }]
+                },
+                "Path": "/"
+            }
+        },
+        "IamPolicyLambdaExecution": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": { "Fn::Join" : [ "-", [ { "Ref" : "LambdaNameParameter" }, "lambda"]]},
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
+                        "Resource": "arn:aws:logs:us-east-1:*:*"
+                    }]
+                },
+                "Roles": [{
+                    "Ref": "IamRoleLambdaExecution"
+                }]
+            }
+        },
+        "LambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Code": {
+                    "S3Bucket": { "Ref" : "LambdaBucketParameter" },
+                    "S3Key": { "Ref" : "LambdaFileParameter" }
+                },
+                "FunctionName": { "Ref" : "LambdaNameParameter" },
+                "Handler": { "Ref" : "LambdaHandlerNameParameter" },
+                "MemorySize": { "Ref" : "LambdaMemoryParameter" },
+                "Role": {
+                    "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
+                },
+                "Runtime": { "Ref" : "LambdaRuntimeParameter" },
+                "Timeout": 6
+            }
+        }
+    },
+    "Outputs": {
+        "LambdaFunctionArn": {
+            "Description": "Lambda function info",
+            "Value": {
+                "Fn::GetAtt": ["LambdaFunction", "Arn"]
+            }
+        }
+    }
+}
