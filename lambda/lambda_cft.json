@@ -28,42 +28,13 @@
         "LambdaFileParameter": {
             "Type": "String",
             "Description": "Enter the name of the file (flat or zip) your lambda is in."
-        }
+        },
+        "LambdaIAMRoleParameter": {
+            "Type": "String",
+            "Description": "Enter the ARN of the IAM role for this lambda to assume."
+        },
     },
     "Resources": {
-        "IamRoleLambdaExecution": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "AssumeRolePolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Principal": {
-                            "Service": ["lambda.amazonaws.com"]
-                        },
-                        "Action": ["sts:AssumeRole"]
-                    }]
-                },
-                "Path": "/"
-            }
-        },
-        "IamPolicyLambdaExecution": {
-            "Type": "AWS::IAM::Policy",
-            "Properties": {
-                "PolicyName": { "Fn::Join" : [ "-", [ { "Ref" : "LambdaNameParameter" }, "lambda"]]},
-                "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [{
-                        "Effect": "Allow",
-                        "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-                        "Resource": "arn:aws:logs:us-east-1:*:*"
-                    }]
-                },
-                "Roles": [{
-                    "Ref": "IamRoleLambdaExecution"
-                }]
-            }
-        },
         "LambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -74,9 +45,7 @@
                 "FunctionName": { "Ref" : "LambdaNameParameter" },
                 "Handler": { "Ref" : "LambdaHandlerNameParameter" },
                 "MemorySize": { "Ref" : "LambdaMemoryParameter" },
-                "Role": {
-                    "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
-                },
+                "Role": { "Ref" : "LambdaIAMRoleParameter" },
                 "Runtime": { "Ref" : "LambdaRuntimeParameter" },
                 "Timeout": 6
             }

@@ -22,5 +22,9 @@
   {
     "ParameterKey": "LambdaFileParameter",
     "ParameterValue": "dist.zip"
+  },
+  {
+    "ParameterKey": "LambdaIAMRoleParameter",
+    "ParameterValue": "arn:aws:iam::<acct_num>:role/<role-name>"
   }
 ]
