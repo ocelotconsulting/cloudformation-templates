@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "A AWS CloudFormation template for deploying a lambda",
+    "Description": "An AWS CloudFormation template for deploying a lambda",
     "Parameters": {
         "LambdaNameParameter": {
             "Type": "String",
@@ -32,7 +32,7 @@
         "LambdaIAMRoleParameter": {
             "Type": "String",
             "Description": "Enter the ARN of the IAM role for this lambda to assume."
-        },
+        }
     },
     "Resources": {
         "LambdaFunction": {
